@@ -4,35 +4,39 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { createStore } from 'redux';
-import { Provider, useSelector } from 'react-redux';
+import { Provider} from 'react-redux';
 
-let initialState = {
-  countNum: 0,
-  color: 'red', // initial color
-  boxColors : [null],
-}
+const initialState = {
+  count: 0,
+  boxes: [],
+  background: "red"
+};
 
-function countReducer (state=initialState,action){
-  const newState = {...state}
-  if(action.type === 'INCREMENT'){
-    newState.countNum ++;
-  }else if(action.type === 'DECREMENT' && state.countNum > 0){
-    newState.countNum --;
-  }else if(action.type === 'NEW_COLOR'){
-    newState.color = action.payload;
-  }else if(action.type ==='SPECIFIC_NEW_COLOR'){
-    let colors = state.boxColors
-    colors[action.payload.index] = action.payload.color
-    newState.boxColors = colors;
-  }else if(action.type ==='RESET'){
-    newState.countNum = 0;
-    newState.color = 'red';
-    newState.boxColors = [];
+function countReducer(state = initialState, action) {
+  if (action.type === "INCREMENT") {
+    state.count++;
+    state.boxes.push("");
+  } else if (action.type === "DECREMENT") {
+    if (state.count === 0) {
+      state.count = 0;
+    } else {
+      state.count--;
+      state.boxes.pop();
+    }
+  } else if (action.type === "RESET") {
+    state.count = 0;
+    state.boxes = [];
+    state.background = 'red';
+  } else if (action.type === "CHANGE_COLOR") {
+    state.background = action.payload;
+  } else if (action.type === "SINGLE_COLOR") {
+    state.boxes[action.payload.id] = action.payload.singleColor;
   }
-  return newState
+  return state;
 }
 
 const store = createStore(countReducer);
+
 console.log(store.getState())
 
 ReactDOM.render(
